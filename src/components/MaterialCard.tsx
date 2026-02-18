@@ -17,6 +17,11 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
     setImageError(true);
   };
 
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div className="material-card">
       <Link to={`/materials/${roofing_material_id}`}>
@@ -28,7 +33,9 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
             onError={handleImageError}
           />
         ) : (
-          <div className="material-card__placeholder">🏠</div>
+          <div className="material-card__placeholder">
+            <img src="/favicon.svg" alt="RoofMaster" width={120} height={120} />
+          </div>
         )}
         <div className="material-card__content">
           <h3 className="material-card__name">{title}</h3>
@@ -37,7 +44,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
         </div>
       </Link>
       <div className="material-card__button-wrapper">
-        <button className="material-card__button" disabled>
+        <button className="material-card__button" onClick={handleAddClick}>
           Добавить
         </button>
       </div>

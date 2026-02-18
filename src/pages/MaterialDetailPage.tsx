@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import type { RoofingMaterialDetail } from "../types";
 import { apiService } from "../services/api";
 
 const MaterialDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [material, setMaterial] = useState<RoofingMaterialDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      loadMaterial(parseInt(id));
+    if (!id || isNaN(parseInt(id))) {
+      navigate("/", { replace: true });
+      return;
     }
-  }, [id]);
+    loadMaterial(parseInt(id));
+  }, [id, navigate]);
 
   const loadMaterial = async (materialId: number) => {
     try {
       setLoading(true);
-      setError("");
       const data = await apiService.getMaterialById(materialId);
       if (!data) {
-        setError("Материал не найден");
-      } else {
-        setMaterial(data);
+        navigate("/", { replace: true });
+        return;
       }
-    } catch (err) {
-      setError("Ошибка при загрузке данных материала");
-      console.error("Error loading material:", err);
+      setMaterial(data);
+    } catch {
+      navigate("/", { replace: true });
     } finally {
       setLoading(false);
     }
@@ -51,19 +51,8 @@ const MaterialDetailPage: React.FC = () => {
     );
   }
 
-  if (error || !material) {
-    return (
-      <div className="page-material-detail">
-        <div className="container">
-          <div className="page-material-detail__error">
-            <h2 className="page-material-detail__error-title">Ошибка</h2>
-            <p className="page-material-detail__error-message">
-              {error || "Материал не найден"}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+  if (!material) {
+    return null;
   }
 
   return (
@@ -78,7 +67,9 @@ const MaterialDetailPage: React.FC = () => {
               onError={handleImageError}
             />
           ) : (
-            <div className="page-material-detail__placeholder">🏠</div>
+            <div className="page-material-detail__placeholder">
+              <img src="/favicon.svg" alt="RoofMaster" width={240} height={240} />
+            </div>
           )}
           <div className="page-material-detail__content">
             <h1 className="page-material-detail__name">{material.title}</h1>

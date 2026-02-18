@@ -65,13 +65,8 @@
   margin-top: auto;
 }
 
-.material-card__button:hover:not(:disabled) {
+.material-card__button:hover {
   background-color: var(--accent-hover);
-}
-
-.material-card__button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .material-card__button-wrapper {

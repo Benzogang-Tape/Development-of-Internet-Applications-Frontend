@@ -4,7 +4,6 @@ export interface RoofingMaterial {
   min_tilt_angle: number;
   max_tilt_angle: number;
   photo: string;
-  is_delete: boolean;
 }
 
 export interface RoofingMaterialDetail {
@@ -15,7 +14,6 @@ export interface RoofingMaterialDetail {
   max_tilt_angle: number;
   photo: string;
   video_url: string;
-  is_delete: boolean;
 }
 
 export interface RoofingMaterialsListResponse {
