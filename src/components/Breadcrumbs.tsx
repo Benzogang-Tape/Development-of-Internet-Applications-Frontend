@@ -11,7 +11,7 @@ const Breadcrumbs: React.FC = () => {
   const getBreadcrumbName = (pathname: string): string => {
     if (pathname === "") return "Главная";
     if (pathname === "materials") return "Кровельные материалы";
-    if (!isNaN(Number(pathname))) return "Детали материала";
+    if (!isNaN(Number(pathname))) return "Подробнее";
     return pathname.charAt(0).toUpperCase() + pathname.slice(1);
   };
 

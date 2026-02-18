@@ -13,6 +13,7 @@ const MaterialDetailPage: React.FC = () => {
   const [material, setMaterial] = useState<RoofingMaterialDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState(false);
+  const [videoFallbackUsed, setVideoFallbackUsed] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -33,6 +34,9 @@ const MaterialDetailPage: React.FC = () => {
         return;
       }
       setMaterial(data);
+      setVideoFallbackUsed(false);
+      setVideoError(false);
+      setImageError(false);
     } catch {
       navigate("/", { replace: true });
     } finally {
@@ -41,6 +45,10 @@ const MaterialDetailPage: React.FC = () => {
   };
 
   const handleVideoError = () => {
+    if (!videoFallbackUsed && material?.video_url) {
+      setVideoFallbackUsed(true);
+      return;
+    }
     setVideoError(true);
   };
 
@@ -74,6 +82,14 @@ const MaterialDetailPage: React.FC = () => {
     return null;
   }
 
+  const hasVideoUrl = Boolean(material.video_url && material.video_url.trim());
+  const noVideo = !hasVideoUrl || videoError;
+  const videoSrc = noVideo
+    ? ""
+    : !videoFallbackUsed
+      ? material.video_url
+      : "/stub.mp4";
+
   return (
     <div className="page-material-detail-vertical">
       <SidebarNavigation />
@@ -84,18 +100,57 @@ const MaterialDetailPage: React.FC = () => {
         <div className="page-material-detail-vertical__card">
           {/* Video section */}
           <div className="page-material-detail-vertical__video-section">
-            {material.video_url && !videoError ? (
+            {!noVideo ? (
               <video
-                src={material.video_url}
+                src={videoSrc}
                 className="page-material-detail-vertical__video"
-                controls
+                autoPlay
+                loop
+                muted
+                playsInline
                 onError={handleVideoError}
               />
             ) : (
-              <div className="page-material-detail-vertical__video-placeholder">
-                <img src="/favicon.svg" alt="RoofMaster" width={120} height={120} />
-                <p>Видео недоступно</p>
-              </div>
+              <>
+                <video
+                  src="/stub.mp4"
+                  className="page-material-detail-vertical__video page-material-detail-vertical__video_placeholder"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-hidden
+                />
+                <div className="page-material-detail-vertical__video-unavailable-text">Видео недоступно</div>
+                <div className="page-material-detail-vertical__overlay page-material-detail-vertical__overlay_on-placeholder">
+                  <div className="page-material-detail-vertical__overlay-content">
+                    {material.photo && !imageError ? (
+                      <img
+                        src={material.photo}
+                        alt={material.title}
+                        className="page-material-detail-vertical__overlay-image"
+                        onError={handleImageError}
+                      />
+                    ) : (
+                      <div className="page-material-detail-vertical__overlay-image-placeholder">
+                        <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
+                      </div>
+                    )}
+                    <div className="page-material-detail-vertical__overlay-info">
+                      <h3
+                        className="page-material-detail-vertical__overlay-title"
+                        onClick={handleTitleClick}
+                      >
+                        {material.title}
+                      </h3>
+                      <div className="page-material-detail-vertical__overlay-angles">
+                        <span>min ∠: {material.min_tilt_angle}°</span>
+                        <span>max ∠: {material.max_tilt_angle}°</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
           </div>
 

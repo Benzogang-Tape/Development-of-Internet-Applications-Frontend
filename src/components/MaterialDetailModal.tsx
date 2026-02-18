@@ -29,8 +29,15 @@ const MaterialDetailModal: React.FC<MaterialDetailModalProps> = ({
   return (
     <div className="material-detail-modal" onClick={handleBackdropClick}>
       <div className="material-detail-modal__content" onClick={(e) => e.stopPropagation()}>
-        <button className="material-detail-modal__close" onClick={onClose}>
-          ×
+        <button
+          type="button"
+          className="material-detail-modal__close"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
         <div className="material-detail-modal__card">
           {material.photo && !imageError ? (

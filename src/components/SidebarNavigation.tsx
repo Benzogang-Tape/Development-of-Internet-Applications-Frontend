@@ -1,10 +1,8 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SidebarNavigation: React.FC = () => {
-  const location = useLocation();
-
   return (
     <nav className="sidebar-nav">
       <div className="sidebar-nav__brand">
@@ -13,26 +11,10 @@ const SidebarNavigation: React.FC = () => {
         </Link>
       </div>
       <div className="sidebar-nav__links">
-        <Nav.Link
-          className={
-            "sidebar-nav__link " +
-            (location.pathname === "/" ? "sidebar-nav__link_active" : "")
-          }
-          as={Link}
-          to="/"
-        >
+        <Nav.Link className="sidebar-nav__link" as={Link} to="/">
           Главная
         </Nav.Link>
-        <Nav.Link
-          className={
-            "sidebar-nav__link " +
-            (location.pathname.startsWith("/materials")
-              ? "sidebar-nav__link_active"
-              : "")
-          }
-          as={Link}
-          to="/materials"
-        >
+        <Nav.Link className="sidebar-nav__link" as={Link} to="/materials">
           Кровельные материалы
         </Nav.Link>
       </div>
