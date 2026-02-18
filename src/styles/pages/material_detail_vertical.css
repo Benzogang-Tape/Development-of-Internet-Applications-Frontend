@@ -1,0 +1,141 @@
+.page-material-detail-vertical {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+.page-material-detail-vertical__main {
+  margin-left: 250px;
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+.page-material-detail-vertical__breadcrumbs {
+  width: 100%;
+  max-width: 500px;
+  padding-left: 1rem;
+}
+
+.page-material-detail-vertical__breadcrumbs .breadcrumbs {
+  position: static;
+  top: auto;
+  left: auto;
+}
+
+.page-material-detail-vertical__loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.page-material-detail-vertical__card {
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.page-material-detail-vertical__video-section {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  background-color: rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.page-material-detail-vertical__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.page-material-detail-vertical__video-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.page-material-detail-vertical__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.95) 0%,
+    rgba(10, 10, 10, 0.8) 70%,
+    transparent 100%
+  );
+  padding: 1.5rem;
+}
+
+.page-material-detail-vertical__overlay-content {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.page-material-detail-vertical__overlay-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.page-material-detail-vertical__overlay-image-placeholder {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.page-material-detail-vertical__overlay-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.page-material-detail-vertical__overlay-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.page-material-detail-vertical__overlay-title:hover {
+  color: var(--accent);
+}
+
+.page-material-detail-vertical__overlay-angles {
+  display: flex;
+  gap: 1rem;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.page-material-detail-vertical__overlay-angles span {
+  color: var(--accent);
+  font-weight: 500;
+}
