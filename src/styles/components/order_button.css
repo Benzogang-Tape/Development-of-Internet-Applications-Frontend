@@ -1,0 +1,60 @@
+.order-button-fixed {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--accent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 50;
+  text-decoration: none;
+}
+
+.order-button-fixed:hover {
+  background-color: var(--accent-hover);
+}
+
+.order-button-fixed svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--bg-primary);
+}
+
+.order-button-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background-color: var(--danger);
+  color: var(--text-primary);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.order-button-fixed.disabled {
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.order-button-fixed.disabled:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.order-button-fixed.disabled svg {
+  fill: rgba(255, 255, 255, 0.4);
+}

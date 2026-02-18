@@ -1,0 +1,12 @@
+@import "reset.css";
+@import "vars.css";
+@import "global.css";
+
+@import "pages/home.css";
+@import "pages/materials.css";
+@import "pages/material_detail.css";
+
+@import "components/navbar.css";
+@import "components/breadcrumbs.css";
+@import "components/material_card.css";
+@import "components/order_button.css";
