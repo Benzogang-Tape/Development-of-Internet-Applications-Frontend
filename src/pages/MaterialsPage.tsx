@@ -1,29 +1,40 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import type { FormEvent } from "react";
+import { useDispatch } from "react-redux";
 import { Spinner } from "react-bootstrap";
-import type { RoofingMaterial } from "../types";
 import { apiService } from "../services/api";
+import {
+  useSearchQuery,
+  useMaterials,
+  useMaterialsLoading,
+  setSearchQueryAction,
+  setMaterialsAction,
+  setLoadingAction,
+} from "../store/materialsSlice";
 import MaterialCard from "../components/MaterialCard";
 import OrderButton from "../components/OrderButton";
 
 const MaterialsPage: React.FC = () => {
-  const [materials, setMaterials] = useState<RoofingMaterial[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const dispatch = useDispatch();
+  const searchQuery = useSearchQuery();
+  const materials = useMaterials();
+  const loading = useMaterialsLoading();
 
   useEffect(() => {
-    loadMaterials();
+    if (materials.length === 0) {
+      loadMaterials();
+    }
   }, []);
 
   const loadMaterials = async () => {
     try {
-      setLoading(true);
+      dispatch(setLoadingAction(true));
       const data = await apiService.getMaterials(searchQuery);
-      setMaterials(data);
+      dispatch(setMaterialsAction(data));
     } catch (err) {
       console.error("Error loading materials:", err);
     } finally {
-      setLoading(false);
+      dispatch(setLoadingAction(false));
     }
   };
 
@@ -46,7 +57,7 @@ const MaterialsPage: React.FC = () => {
             className="page-materials__search-input"
             placeholder="Поиск материала..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => dispatch(setSearchQueryAction(e.target.value))}
           />
           <button type="submit" className="page-materials__search-button">
             Найти
