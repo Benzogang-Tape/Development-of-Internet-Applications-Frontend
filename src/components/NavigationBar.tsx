@@ -50,6 +50,7 @@ const NavigationBar: React.FC = () => {
           Кровельные материалы
         </Nav.Link>
       </div>
+      <div className="navbar__overlay" onClick={() => setExpanded(false)} />
       <div className="navbar__mobile-menu" onClick={(e) => e.stopPropagation()}>
         <Nav.Link
           className={
