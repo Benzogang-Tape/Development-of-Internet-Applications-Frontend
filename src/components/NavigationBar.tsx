@@ -21,11 +21,36 @@ const NavigationBar: React.FC = () => {
         <button
           className="navbar__togglebtn"
           onClick={() => setExpanded(!expanded)}
+          aria-label="Меню"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
       </div>
       <div className="navbar__links">
+        <Nav.Link
+          className={
+            "navbar__link " +
+            (location.pathname === "/" ? "navbar__link_active" : "")
+          }
+          as={Link}
+          to="/"
+        >
+          Главная
+        </Nav.Link>
+        <Nav.Link
+          className={
+            "navbar__link " +
+            (location.pathname.startsWith("/materials")
+              ? "navbar__link_active"
+              : "")
+          }
+          as={Link}
+          to="/materials"
+        >
+          Кровельные материалы
+        </Nav.Link>
+      </div>
+      <div className="navbar__mobile-menu" onClick={(e) => e.stopPropagation()}>
         <Nav.Link
           className={
             "navbar__link " +

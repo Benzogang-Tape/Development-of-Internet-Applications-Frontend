@@ -106,12 +106,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.95) 0%,
-    rgba(10, 10, 10, 0.8) 70%,
-    transparent 100%
-  );
+  background: linear-gradient(to top,
+      rgba(10, 10, 10, 0.95) 0%,
+      rgba(10, 10, 10, 0.8) 70%,
+      transparent 100%);
   padding: 1.5rem;
 }
 
@@ -119,12 +117,10 @@
   top: 0;
   bottom: 0;
   z-index: 1;
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.92) 0%,
-    rgba(10, 10, 10, 0.5) 40%,
-    rgba(10, 10, 10, 0.25) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(10, 10, 10, 0.92) 0%,
+      rgba(10, 10, 10, 0.5) 40%,
+      rgba(10, 10, 10, 0.25) 100%);
   display: flex;
   align-items: flex-end;
 }
@@ -185,4 +181,20 @@
 .page-material-detail-vertical__overlay-angles span {
   color: var(--accent);
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .page-material-detail-vertical__main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .page-material-detail-vertical__card {
+    max-width: 100%;
+    margin-top: 1rem;
+  }
+
+  .page-material-detail-vertical__breadcrumbs {
+    max-width: 100%;
+  }
 }

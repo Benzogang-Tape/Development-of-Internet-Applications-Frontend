@@ -58,3 +58,17 @@
 .order-button-fixed.disabled svg {
   fill: rgba(255, 255, 255, 0.4);
 }
+
+@media (max-width: 480px) {
+  .order-button-fixed {
+    left: 20px;
+    bottom: 20px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .order-button-fixed svg {
+    width: 24px;
+    height: 24px;
+  }
+}

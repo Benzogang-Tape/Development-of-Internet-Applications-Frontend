@@ -14,7 +14,7 @@
   border-bottom: 1px solid var(--border-color);
   backdrop-filter: blur(10px);
   z-index: 100;
-  overflow: hidden;
+  overflow: visible;
   transition: height 0.2s;
 }
 
@@ -29,6 +29,58 @@
 
 .navbar .navbar__togglebtn {
   display: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar .navbar-toggler-icon {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.navbar .navbar-toggler-icon::before,
+.navbar .navbar-toggler-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.navbar .navbar-toggler-icon::before {
+  top: -8px;
+}
+
+.navbar .navbar-toggler-icon::after {
+  bottom: -8px;
+}
+
+/* Burger → X animation */
+.navbar.navbar_expanded .navbar-toggler-icon {
+  background-color: transparent;
+}
+
+.navbar.navbar_expanded .navbar-toggler-icon::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.navbar.navbar_expanded .navbar-toggler-icon::after {
+  bottom: 0;
+  transform: rotate(-45deg);
 }
 
 .navbar .navbar__links {
@@ -38,16 +90,13 @@
   gap: 1rem;
 }
 
-@media only screen and (max-width: 430px) {
-  .navbar {
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    gap: 0;
-  }
+.navbar .navbar__mobile-menu {
+  display: none;
+}
 
-  .navbar.navbar_expanded {
-    height: 10rem;
+@media only screen and (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
   }
 
   .navbar .navbar__head {
@@ -55,11 +104,40 @@
   }
 
   .navbar .navbar__togglebtn {
-    display: block;
+    display: flex;
   }
 
   .navbar .navbar__links {
+    display: none;
+  }
+
+  .navbar .navbar__mobile-menu {
+    display: none;
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    width: 100%;
     flex-direction: column;
+    gap: 0;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 0;
+    z-index: 99;
+  }
+
+  .navbar.navbar_expanded .navbar__mobile-menu {
+    display: flex;
+  }
+
+  .navbar .navbar__mobile-menu .navbar__link {
+    padding: 12px 24px;
+    display: block;
+    transition: background-color 0.2s ease, color 0.3s ease;
+  }
+
+  .navbar .navbar__mobile-menu .navbar__link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
   }
 }
 

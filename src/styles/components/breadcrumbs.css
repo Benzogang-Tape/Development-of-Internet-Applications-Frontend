@@ -16,3 +16,9 @@
 .breadcrumbs .breadcrumbs__item.active {
   color: var(--text-primary);
 }
+
+@media (max-width: 768px) {
+  .breadcrumbs {
+    left: 1rem;
+  }
+}
