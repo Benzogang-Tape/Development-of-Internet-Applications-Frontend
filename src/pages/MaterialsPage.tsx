@@ -31,12 +31,6 @@ const MaterialsPage: React.FC = () => {
     loadMaterials();
   };
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      loadMaterials();
-    }
-  };
-
   return (
     <div className="page-materials">
       <div className="container">
@@ -52,7 +46,6 @@ const MaterialsPage: React.FC = () => {
             placeholder="Поиск материала..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
           />
           <button type="submit" className="page-materials__search-button">
             Найти

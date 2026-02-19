@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import type { RoofingMaterial } from "../types";
 
-interface MaterialCardProps extends RoofingMaterial {}
+interface MaterialCardProps extends RoofingMaterial { }
 
 const MaterialCard: React.FC<MaterialCardProps> = ({
   roofing_material_id,
@@ -15,11 +15,6 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
 
   const handleImageError = () => {
     setImageError(true);
-  };
-
-  const handleAddClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
   };
 
   return (
@@ -44,7 +39,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
         </div>
       </Link>
       <div className="material-card__button-wrapper">
-        <button className="material-card__button" onClick={handleAddClick}>
+        <button className="material-card__button">
           Добавить
         </button>
       </div>
