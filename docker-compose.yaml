@@ -9,4 +9,12 @@ services:
       - /app/node_modules
     ports:
       - 3000:3000
+    environment:
+      # Прокси /api в Vite должен идти на бэкенд. В контейнере localhost — это сам контейнер, не хост.
+      # Вариант 1: бэкенд на хосте — host.docker.internal (Docker Desktop / Linux с add host ниже).
+      - VITE_API_PROXY_TARGET=http://host.docker.internal:8080
+      # Вариант 2: бэкенд в том же docker-compose с именем backend — замените на: http://backend:8080
+    extra_hosts:
+      # На Linux host.docker.internal по умолчанию нет — эта строка добавляет его (адрес шлюза Docker).
+      - "host.docker.internal:host-gateway"
     command: npm run dev
