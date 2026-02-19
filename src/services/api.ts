@@ -269,7 +269,10 @@ export const apiService = {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        return {
+          tilt_angle_calculation_id: -1,
+          roofing_materials_count: 0,
+        };
       }
 
       return await response.json();

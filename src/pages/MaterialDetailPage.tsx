@@ -154,35 +154,37 @@ const MaterialDetailPage: React.FC = () => {
             )}
           </div>
 
-          {/* Bottom overlay with photo, name, and angles */}
-          <div className="page-material-detail-vertical__overlay">
-            <div className="page-material-detail-vertical__overlay-content">
-              {material.photo && !imageError ? (
-                <img
-                  src={material.photo}
-                  alt={material.title}
-                  className="page-material-detail-vertical__overlay-image"
-                  onError={handleImageError}
-                />
-              ) : (
-                <div className="page-material-detail-vertical__overlay-image-placeholder">
-                  <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
-                </div>
-              )}
-              <div className="page-material-detail-vertical__overlay-info">
-                <h3
-                  className="page-material-detail-vertical__overlay-title"
-                  onClick={handleTitleClick}
-                >
-                  {material.title}
-                </h3>
-                <div className="page-material-detail-vertical__overlay-angles">
-                  <span>min ∠: {material.min_tilt_angle}°</span>
-                  <span>max ∠: {material.max_tilt_angle}°</span>
+          {/* Нижний оверлей только при наличии видео — при noVideo контент уже в overlay_on_placeholder */}
+          {!noVideo && (
+            <div className="page-material-detail-vertical__overlay">
+              <div className="page-material-detail-vertical__overlay-content">
+                {material.photo && !imageError ? (
+                  <img
+                    src={material.photo}
+                    alt={material.title}
+                    className="page-material-detail-vertical__overlay-image"
+                    onError={handleImageError}
+                  />
+                ) : (
+                  <div className="page-material-detail-vertical__overlay-image-placeholder">
+                    <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
+                  </div>
+                )}
+                <div className="page-material-detail-vertical__overlay-info">
+                  <h3
+                    className="page-material-detail-vertical__overlay-title"
+                    onClick={handleTitleClick}
+                  >
+                    {material.title}
+                  </h3>
+                  <div className="page-material-detail-vertical__overlay-angles">
+                    <span>min ∠: {material.min_tilt_angle}°</span>
+                    <span>max ∠: {material.max_tilt_angle}°</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
