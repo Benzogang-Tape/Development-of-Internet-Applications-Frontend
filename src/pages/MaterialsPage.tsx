@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import type { FormEvent } from "react";
 import { Spinner } from "react-bootstrap";
 import type { RoofingMaterial } from "../types";
 import { apiService } from "../services/api";
@@ -26,7 +27,7 @@ const MaterialsPage: React.FC = () => {
     }
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
     loadMaterials();
   };

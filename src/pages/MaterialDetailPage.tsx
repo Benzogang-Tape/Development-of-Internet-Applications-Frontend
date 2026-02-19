@@ -1,11 +1,53 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import type { RoofingMaterialDetail } from "../types";
 import { apiService } from "../services/api";
+import { useImageFallback } from "../hooks/useImageFallback";
 import SidebarNavigation from "../components/SidebarNavigation";
 import Breadcrumbs from "../components/Breadcrumbs";
 import MaterialDetailModal from "../components/MaterialDetailModal";
+
+interface OverlayContentProps {
+  material: RoofingMaterialDetail;
+  imageError: boolean;
+  onImageError: () => void;
+  onTitleClick: () => void;
+}
+
+const OverlayContent: React.FC<OverlayContentProps> = ({
+  material,
+  imageError,
+  onImageError,
+  onTitleClick,
+}) => (
+  <div className="page-material-detail-vertical__overlay-content">
+    {material.photo && !imageError ? (
+      <img
+        src={material.photo}
+        alt={material.title}
+        className="page-material-detail-vertical__overlay-image"
+        onError={onImageError}
+      />
+    ) : (
+      <div className="page-material-detail-vertical__overlay-image-placeholder">
+        <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
+      </div>
+    )}
+    <div className="page-material-detail-vertical__overlay-info">
+      <h3
+        className="page-material-detail-vertical__overlay-title"
+        onClick={onTitleClick}
+      >
+        {material.title}
+      </h3>
+      <div className="page-material-detail-vertical__overlay-angles">
+        <span>min ∠: {material.min_tilt_angle}°</span>
+        <span>max ∠: {material.max_tilt_angle}°</span>
+      </div>
+    </div>
+  </div>
+);
 
 const MaterialDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +57,7 @@ const MaterialDetailPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [videoFallbackUsed, setVideoFallbackUsed] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const { imageError, handleImageError, resetImageError } = useImageFallback();
 
   useEffect(() => {
     if (!id || isNaN(parseInt(id))) {
@@ -36,7 +78,7 @@ const MaterialDetailPage: React.FC = () => {
       setMaterial(data);
       setVideoFallbackUsed(false);
       setVideoError(false);
-      setImageError(false);
+      resetImageError();
     } catch {
       navigate("/", { replace: true });
     } finally {
@@ -50,10 +92,6 @@ const MaterialDetailPage: React.FC = () => {
       return;
     }
     setVideoError(true);
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
   };
 
   const handleTitleClick = () => {
@@ -123,32 +161,12 @@ const MaterialDetailPage: React.FC = () => {
                 />
                 <div className="page-material-detail-vertical__video-unavailable-text">Видео недоступно</div>
                 <div className="page-material-detail-vertical__overlay page-material-detail-vertical__overlay_on-placeholder">
-                  <div className="page-material-detail-vertical__overlay-content">
-                    {material.photo && !imageError ? (
-                      <img
-                        src={material.photo}
-                        alt={material.title}
-                        className="page-material-detail-vertical__overlay-image"
-                        onError={handleImageError}
-                      />
-                    ) : (
-                      <div className="page-material-detail-vertical__overlay-image-placeholder">
-                        <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
-                      </div>
-                    )}
-                    <div className="page-material-detail-vertical__overlay-info">
-                      <h3
-                        className="page-material-detail-vertical__overlay-title"
-                        onClick={handleTitleClick}
-                      >
-                        {material.title}
-                      </h3>
-                      <div className="page-material-detail-vertical__overlay-angles">
-                        <span>min ∠: {material.min_tilt_angle}°</span>
-                        <span>max ∠: {material.max_tilt_angle}°</span>
-                      </div>
-                    </div>
-                  </div>
+                  <OverlayContent
+                    material={material}
+                    imageError={imageError}
+                    onImageError={handleImageError}
+                    onTitleClick={handleTitleClick}
+                  />
                 </div>
               </>
             )}
@@ -157,32 +175,12 @@ const MaterialDetailPage: React.FC = () => {
           {/* Нижний оверлей только при наличии видео — при noVideo контент уже в overlay_on_placeholder */}
           {!noVideo && (
             <div className="page-material-detail-vertical__overlay">
-              <div className="page-material-detail-vertical__overlay-content">
-                {material.photo && !imageError ? (
-                  <img
-                    src={material.photo}
-                    alt={material.title}
-                    className="page-material-detail-vertical__overlay-image"
-                    onError={handleImageError}
-                  />
-                ) : (
-                  <div className="page-material-detail-vertical__overlay-image-placeholder">
-                    <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
-                  </div>
-                )}
-                <div className="page-material-detail-vertical__overlay-info">
-                  <h3
-                    className="page-material-detail-vertical__overlay-title"
-                    onClick={handleTitleClick}
-                  >
-                    {material.title}
-                  </h3>
-                  <div className="page-material-detail-vertical__overlay-angles">
-                    <span>min ∠: {material.min_tilt_angle}°</span>
-                    <span>max ∠: {material.max_tilt_angle}°</span>
-                  </div>
-                </div>
-              </div>
+              <OverlayContent
+                material={material}
+                imageError={imageError}
+                onImageError={handleImageError}
+                onTitleClick={handleTitleClick}
+              />
             </div>
           )}
         </div>

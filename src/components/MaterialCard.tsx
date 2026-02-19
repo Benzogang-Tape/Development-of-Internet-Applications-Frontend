@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import type { RoofingMaterial } from "../types";
+import { useImageFallback } from "../hooks/useImageFallback";
 
 interface MaterialCardProps extends RoofingMaterial { }
 
@@ -11,11 +11,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
   max_tilt_angle,
   photo,
 }) => {
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  const { imageError, handleImageError } = useImageFallback();
 
   return (
     <div className="material-card">

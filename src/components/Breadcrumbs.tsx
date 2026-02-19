@@ -1,4 +1,3 @@
-import React from "react";
 import { Breadcrumb } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { MouseEvent } from "react";

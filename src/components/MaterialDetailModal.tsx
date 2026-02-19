@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import type { RoofingMaterialDetail } from "../types";
+import { useImageFallback } from "../hooks/useImageFallback";
 
 interface MaterialDetailModalProps {
   material: RoofingMaterialDetail;
@@ -12,22 +12,12 @@ const MaterialDetailModal: React.FC<MaterialDetailModalProps> = ({
   show,
   onClose,
 }) => {
-  const [imageError, setImageError] = useState(false);
+  const { imageError, handleImageError } = useImageFallback();
 
   if (!show) return null;
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
   return (
-    <div className="material-detail-modal" onClick={handleBackdropClick}>
+    <div className="material-detail-modal" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="material-detail-modal__content" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
