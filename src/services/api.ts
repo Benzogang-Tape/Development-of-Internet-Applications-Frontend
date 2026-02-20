@@ -4,10 +4,11 @@ import type {
   RoofingMaterialsListResponse,
   DraftCalculationInfo,
 } from "../types";
+import { dest_api } from "../../target_config";
 
 // In dev mode, Vite proxies /api to the backend.
-// On GitHub Pages, try reaching the backend directly on localhost.
-const API_BASE_URL = import.meta.env.DEV ? "/api" : "http://localhost:8080/api";
+// In Tauri mode, dest_api points directly to the backend IP.
+const API_BASE_URL = dest_api;
 
 const MOCK_MATERIALS: RoofingMaterial[] = [
   {

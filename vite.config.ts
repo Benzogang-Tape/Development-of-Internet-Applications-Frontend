@@ -1,25 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import mkcert from 'vite-plugin-mkcert'
-import fs from 'fs'
-import path from 'path'
+// import mkcert from 'vite-plugin-mkcert'
+// import fs from 'fs'
+// import path from 'path'
+import { api_proxy_addr, dest_root } from './target_config'
 
 // В Docker контейнере localhost не видит бэкенд — задаём target через env.
 // Без Docker: не задавать или localhost:8080. В Docker: имя сервиса (например backend:8080) или host.docker.internal:8080.
-const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || 'http://localhost:8080'
+const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || api_proxy_addr
 
-// Для GitHub Pages в production используем имя репозитория как base path.
-// В dev-режиме base = "/" чтобы не менять рабочий процесс.
-const base = process.env.NODE_ENV === 'production'
-  ? '/Development-of-Internet-Applications-Frontend/'
-  : '/'
+// base path: из target_config (для GitHub Pages в production, "/" для Tauri)
+const base = dest_root || '/'
 
 export default defineConfig({
   base,
   plugins: [
     react(),
-    mkcert(),
+    // mkcert(), // закомментировано для Tauri (не поддерживает HTTPS)
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
@@ -52,10 +50,10 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     host: true,
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'cert.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'cert.crt')),
-    },
+    // https: {
+    //   key: fs.readFileSync(path.resolve(__dirname, 'cert.key')),
+    //   cert: fs.readFileSync(path.resolve(__dirname, 'cert.crt')),
+    // },
     watch: {
       usePolling: true,
     },

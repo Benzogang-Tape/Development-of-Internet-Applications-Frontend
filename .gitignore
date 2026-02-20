@@ -32,3 +32,11 @@ design-reference
 # SSL certificates (never commit private keys!)
 *.crt
 *.key
+
+# Tauri
+src-tauri/target/
+src-tauri/gen/
+src-tauri/WixTools/
+
+
+screenshots/lab6/
