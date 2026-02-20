@@ -1,7 +1,7 @@
 // Переключатель режима: true — Tauri build (прямые запросы по IP), false — dev/web (через proxy)
-export const target_tauri = false;
+export const target_tauri = true;
 
-// IP-адрес бэкенда в локальной сети (замените YOUR_IP на реальный адрес)
+// IP-адрес бэкенда в локальной сети
 export const api_proxy_addr = "http://192.168.1.70:8080";
 
 // Адрес API: в Tauri — напрямую по IP, в web — через proxy dev-сервера
