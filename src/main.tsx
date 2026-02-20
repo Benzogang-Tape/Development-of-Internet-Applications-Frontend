@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import App from "./App";
+import { registerSW } from "virtual:pwa-register";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/main.css";
 
@@ -16,3 +17,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </Provider>
   </React.StrictMode>
 );
+
+if ("serviceWorker" in navigator) {
+  registerSW();
+}

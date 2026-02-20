@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .vite
+dev-dist
 
 # Editor directories and files
 .cursor
