@@ -6,7 +6,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Без Docker: не задавать или localhost:8080. В Docker: имя сервиса (например backend:8080) или host.docker.internal:8080.
 const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || 'http://localhost:8080'
 
+// Для GitHub Pages в production используем имя репозитория как base path.
+// В dev-режиме base = "/" чтобы не менять рабочий процесс.
+const base = process.env.NODE_ENV === 'production'
+  ? '/Development-of-Internet-Applications-Frontend/'
+  : '/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -17,19 +24,19 @@ export default defineConfig({
       manifest: {
         name: "RoofMaster",
         short_name: "RoofMaster",
-        start_url: "/",
+        start_url: base,
         display: "standalone",
         background_color: "#121212",
         theme_color: "#1DB954",
         orientation: "portrait-primary",
         icons: [
           {
-            src: "/logo192.png",
+            src: `${base}logo192.png`,
             type: "image/png",
             sizes: "192x192",
           },
           {
-            src: "/logo512.png",
+            src: `${base}logo512.png`,
             type: "image/png",
             sizes: "512x512",
           },
@@ -53,3 +60,4 @@ export default defineConfig({
     }
   }
 })
+

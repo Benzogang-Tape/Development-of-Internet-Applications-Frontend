@@ -31,7 +31,7 @@ const OverlayContent: React.FC<OverlayContentProps> = ({
       />
     ) : (
       <div className="page-material-detail-vertical__overlay-image-placeholder">
-        <img src="/favicon.svg" alt="RoofMaster" width={60} height={60} />
+        <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="RoofMaster" width={60} height={60} />
       </div>
     )}
     <div className="page-material-detail-vertical__overlay-info">
@@ -126,7 +126,7 @@ const MaterialDetailPage: React.FC = () => {
     ? ""
     : !videoFallbackUsed
       ? material.video_url
-      : "/stub.mp4";
+      : `${import.meta.env.BASE_URL}stub.mp4`;
 
   return (
     <div className="page-material-detail-vertical">
@@ -151,7 +151,7 @@ const MaterialDetailPage: React.FC = () => {
             ) : (
               <>
                 <video
-                  src="/stub.mp4"
+                  src={`${import.meta.env.BASE_URL}stub.mp4`}
                   className="page-material-detail-vertical__video page-material-detail-vertical__video_placeholder"
                   autoPlay
                   loop

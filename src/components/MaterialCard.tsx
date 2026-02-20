@@ -25,7 +25,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
           />
         ) : (
           <div className="material-card__placeholder">
-            <img src="/favicon.svg" alt="RoofMaster" width={120} height={120} />
+            <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="RoofMaster" width={120} height={120} />
           </div>
         )}
         <div className="material-card__content">

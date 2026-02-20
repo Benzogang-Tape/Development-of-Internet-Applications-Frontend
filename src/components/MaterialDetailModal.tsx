@@ -39,7 +39,7 @@ const MaterialDetailModal: React.FC<MaterialDetailModalProps> = ({
             />
           ) : (
             <div className="material-detail-modal__placeholder">
-              <img src="/favicon.svg" alt="RoofMaster" width={240} height={240} />
+              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="RoofMaster" width={240} height={240} />
             </div>
           )}
           <div className="material-detail-modal__info">

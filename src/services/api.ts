@@ -252,7 +252,12 @@ export const apiService = {
       const response = await fetch(`${API_BASE_URL}/roofing_materials/${id}`);
 
       if (!response.ok) {
-        if (response.status === 404) return null;
+        // On GitHub Pages, API endpoints return HTML 404 pages.
+        // Only treat as "not found" if it's a real JSON API response.
+        const contentType = response.headers.get("content-type");
+        if (response.status === 404 && contentType?.includes("application/json")) {
+          return null;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
