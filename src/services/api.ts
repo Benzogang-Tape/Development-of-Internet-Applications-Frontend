@@ -5,7 +5,9 @@ import type {
   DraftCalculationInfo,
 } from "../types";
 
-const API_BASE_URL = "/api";
+// In dev mode, Vite proxies /api to the backend.
+// On GitHub Pages, try reaching the backend directly on localhost.
+const API_BASE_URL = import.meta.env.DEV ? "/api" : "http://localhost:8080/api";
 
 const MOCK_MATERIALS: RoofingMaterial[] = [
   {

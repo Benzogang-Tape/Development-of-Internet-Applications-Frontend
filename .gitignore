@@ -28,3 +28,7 @@ dev-dist
 
 stuff
 design-reference
+
+# SSL certificates (never commit private keys!)
+*.crt
+*.key

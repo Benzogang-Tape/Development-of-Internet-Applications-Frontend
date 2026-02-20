@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import mkcert from 'vite-plugin-mkcert'
+import fs from 'fs'
+import path from 'path'
 
 // В Docker контейнере localhost не видит бэкенд — задаём target через env.
 // Без Docker: не задавать или localhost:8080. В Docker: имя сервиса (например backend:8080) или host.docker.internal:8080.
@@ -16,6 +19,7 @@ export default defineConfig({
   base,
   plugins: [
     react(),
+    mkcert(),
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
@@ -48,6 +52,10 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     host: true,
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, 'cert.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'cert.crt')),
+    },
     watch: {
       usePolling: true,
     },
@@ -60,4 +68,3 @@ export default defineConfig({
     }
   }
 })
-
