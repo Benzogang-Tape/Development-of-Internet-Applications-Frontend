@@ -1,0 +1,52 @@
+# Очистка и рефакторинг React-приложения — Walkthrough
+
+## Итерация 1: удаление мёртвого кода
+
+| Файл | Действие |
+|------|----------|
+| [material_detail.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/material_detail.css) | 🗑️ Удалён (84 строки неиспользуемого CSS) |
+| [main.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/main.css) | Убран `@import "pages/material_detail.css"` |
+| [MaterialsPage.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx) | Удалён дублирующий `handleSearchKeyDown` + `onKeyDown` |
+| [MaterialCard.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/MaterialCard.tsx) | Убрана заглушка `handleAddClick` |
+
+---
+
+## Итерация 2: рефакторинг
+
+### Новый файл: [useImageFallback](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/hooks/useImageFallback.ts#3-16) hook
+
+```diff:useImageFallback.ts
+===
+import { useState, useCallback } from "react";
+
+export function useImageFallback() {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
+  const resetImageError = useCallback(() => {
+    setImageError(false);
+  }, []);
+
+  return { imageError, handleImageError, resetImageError };
+}
+```
+
+Заменяет дублирование `imageError` state + `handleImageError` в 3 компонентах.
+
+### Основные изменения
+
+| Файл | Изменения |
+|------|-----------|
+| [MaterialDetailPage.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialDetailPage.tsx) | Дублирующий overlay (~30 строк ×2) → подкомпонент [OverlayContent](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialDetailPage.tsx#18-51) + [useImageFallback](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/hooks/useImageFallback.ts#3-16) + убран `import React` |
+| [OrderButton.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/OrderButton.tsx) | SVG дубль → компонент [CalendarIcon](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/OrderButton.tsx#5-10) + убран `import React` |
+| [MaterialCard.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/MaterialCard.tsx) | [useImageFallback](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/hooks/useImageFallback.ts#3-16) + убран `import React` |
+| [MaterialDetailModal.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/MaterialDetailModal.tsx) | [useImageFallback](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/hooks/useImageFallback.ts#3-16) + инлайн `handleBackdropClick` + убран `import React` |
+| Остальные 4 файла | Убран `import React` |
+
+## Валидация
+
+- ✅ `npx tsc --noEmit` — без ошибок
+- ✅ `npm run build` — сборка успешна (776ms)

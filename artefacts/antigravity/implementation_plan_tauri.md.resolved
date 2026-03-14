@@ -1,0 +1,132 @@
+# Интеграция Tauri 2.0 в существующий React/Vite проект
+
+Создание нативного Tauri приложения на основе существующего React-фронтенда (интерфейс гостя: 3 страницы с фильтрацией и картинками, без авторизации). Следуем инструкции из [README.md](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/lab6/tauri/README.md).
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Rust & Cargo** не установлены на машине. Перед выполнением плана необходимо установить Rust:
+> ```bash
+> curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+> ```
+> После установки перезапустите терминал и убедитесь: `rustc --version && cargo --version`.
+
+> [!IMPORTANT]
+> **IP-адрес бэкенда**: в файле `target_config.ts` я установлю placeholder `http://YOUR_IP:8080`. Перед запуском `tauri build` его нужно заменить на реальный IP вашего бэкенда в локальной сети (можно узнать через `npm run dev -- --host`).
+
+## Proposed Changes
+
+### Конфигурация targets (`target_config.ts`)
+
+#### [NEW] [target_config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/target_config.ts)
+
+Файл-переключатель для адресов API/images. Флаг `target_tauri` управляет тем, используется ли прямое подключение по IP или прокси dev-сервера:
+
+```ts
+export const target_tauri = false;
+
+export const api_proxy_addr = "http://YOUR_IP:8080";
+export const dest_api = target_tauri ? api_proxy_addr + "/api" : "/api";
+export const dest_root = target_tauri ? "" : "/Development-of-Internet-Applications-Frontend/";
+```
+
+---
+
+### Обновление существующих файлов
+
+#### [MODIFY] [vite.config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/vite.config.ts)
+
+- Импорт `dest_root`, `api_proxy_addr` из `target_config.ts`
+- Использовать `dest_root` как значение `base`
+- Использовать `api_proxy_addr` как target для proxy
+
+#### [MODIFY] [main.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/main.tsx)
+
+- Заменить `basename={import.meta.env.BASE_URL}` на `basename={dest_root || "/"}` из `target_config`
+
+#### [MODIFY] [api.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/services/api.ts)
+
+- Заменить `API_BASE_URL` на `dest_api` из `target_config`
+
+#### [MODIFY] [App.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/App.tsx)
+
+- Добавить `useEffect` с `invoke('tauri', ...)` для определения запуска в Tauri
+
+---
+
+### NPM пакеты и scripts
+
+#### [MODIFY] [package.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/package.json)
+
+- `npm install --save-dev @tauri-apps/api@latest @tauri-apps/cli@latest`
+- Добавить script: `"tauri": "tauri"`
+
+---
+
+### Инициализация и конфигурация Tauri
+
+После `npm run tauri init` будет создана папка `src-tauri/`. Мы настроим следующие файлы:
+
+#### [NEW → auto-generated] `src-tauri/tauri.conf.json`
+
+Параметры:
+```json
+{
+  "productName": "RoofMaster",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "plugins": {
+    "http": { "enabled": true }
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{ "title": "RoofMaster" }],
+    "security": {
+      "csp": "default-src 'self' http://YOUR_IP:3000; img-src 'self' https: http: data: blob:; connect-src 'self' http://YOUR_IP:8080; script-src 'self'; style-src 'self' 'unsafe-inline';"
+    }
+  }
+}
+```
+
+#### [MODIFY] `src-tauri/Cargo.toml`
+
+Добавить зависимости:
+```toml
+tauri-plugin-http = "2"
+tauri-plugin-cors-fetch = "2.1.1"
+```
+
+#### [MODIFY] `src-tauri/capabilities/default.json`
+
+Добавить permissions для HTTP и CORS:
+```json
+{
+  "permissions": [
+    "cors-fetch:default",
+    { "identifier": "http:default", "allow": [{ "url": "http://YOUR_IP" }], "deny": [] },
+    "core:default",
+    "http:allow-fetch",
+    "http:allow-fetch-read-body",
+    "http:allow-fetch-send"
+  ]
+}
+```
+
+#### [MODIFY] `src-tauri/src/lib.rs`
+
+Добавить `.plugin(tauri_plugin_cors_fetch::init())` в `tauri::Builder`.
+
+## Verification Plan
+
+### Automated Tests
+1. `npm run tauri info` — убедиться что Tauri 2.x установлен и определяет проект
+2. `npm run build` — убедиться что React build проходит без ошибок
+3. `npm run tauri dev` — запустить Tauri dev mode, убедиться что приложение открывается и отображает 3 страницы
+
+### Manual Verification
+1. Запустить `npm run tauri dev` → проверить что появляется окно приложения с данными (мок или с бэкенда)
+2. Установить `target_tauri = true` в `target_config.ts`, указать реальный IP бэкенда → запустить `npm run tauri build` → запустить собранное приложение → убедиться что данные загружаются с бэкенда
