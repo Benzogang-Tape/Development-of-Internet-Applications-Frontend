@@ -2,7 +2,7 @@
 export const target_tauri = true;
 
 // IP-адрес бэкенда в локальной сети
-export const api_proxy_addr = "http://192.168.1.70:8080";
+export const api_proxy_addr = "http://192.168.195.210:8080";
 
 // Адрес API: в Tauri — напрямую по IP, в web — через proxy dev-сервера
 export const dest_api = target_tauri ? api_proxy_addr + "/api" : "/api";
