@@ -27,7 +27,6 @@ dev-dist
 *.sw?
 
 stuff
-design-reference
 
 # SSL certificates (never commit private keys!)
 *.crt

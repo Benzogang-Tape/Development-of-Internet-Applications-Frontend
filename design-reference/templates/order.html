@@ -1,0 +1,109 @@
+{{ define "order.html" }}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoofMaster - Заявка</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+</head>
+<body>
+    {{ template "header" . }}
+
+    <main>
+        <div class="container">
+            <!-- Заголовок -->
+            <h1 class="page-title">Составление заявки</h1>
+            
+            <!-- Поля нагрузок -->
+            <div style="display: flex; flex-direction: row; justify-content: center; align-items: flex-end; gap: 30px; margin-bottom: 30px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <label class="thickness-label">Снеговая нагрузка, кг/м²</label>
+                    <input type="text" class="thickness-input" value="{{ if .order.SnowLoad }}{{ .order.SnowLoad }}{{ end }}">
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <label class="thickness-label">Ветровая нагрузка, кг/м²</label>
+                    <input type="text" class="thickness-input" value="{{ if .order.WindLoad }}{{ .order.WindLoad }}{{ end }}">
+                </div>
+            </div>
+
+            <p class="page-subtitle">Материалы, добавленные в вашу заявку</p>
+
+            <!-- Список материалов в заявке -->
+            {{ if .materials }}
+            <div class="order-list">
+                <!-- Шапка таблицы -->
+                <div style="display: flex; gap: 24px; align-items: center; padding: 12px 24px; margin-bottom: 10px; max-width: 1100px; margin-left: auto; margin-right: auto;">
+                    <div style="width: 120px; flex-shrink: 0; text-align: center; color: #ffffff; font-size: 18px; font-weight: 600;">Фото</div>
+                    <div style="flex: 1; display: flex; align-items: center; gap: 24px;">
+                        <div style="width: 40%; min-width: 200px; flex-shrink: 0; text-align: center; color: #ffffff; font-size: 18px; font-weight: 600;">Материал</div>
+                        <div style="flex: 1; color: #ffffff; font-size: 18px; font-weight: 600;">Крайние значения</div>
+                    </div>
+                    <div style="flex-shrink: 0; text-align: center; color: #ffffff; font-size: 18px; font-weight: 600; width: 140px;">Толщина</div>
+                    <div style="flex-shrink: 0; text-align: center; color: #ffffff; font-size: 18px; font-weight: 600; width: 140px;">Результат</div>
+                </div>
+                {{ range .materials }}
+                <div class="order-item" style="max-width: 1100px;">
+                    <img src="{{ .ImageURL }}" alt="{{ .Name }}" class="order-item-image" onerror="this.src='https://via.placeholder.com/120?text={{ .Name }}'">
+                    <div class="order-item-content">
+                        <div class="order-item-info">
+                            <div class="order-item-left" onclick="window.location.href='/roofing_materials/{{ .ID }}'" style="cursor: pointer;">
+                                <h3 class="order-item-name" style="width: 40%; min-width: 200px; flex-shrink: 0;">{{ .Name }}</h3>
+                                <div class="order-item-angles">
+                                    <span class="order-angle-inline">min ∠: {{ .MinAngle }}°</span>
+                                    <span class="order-angle-inline">max ∠: {{ .MaxAngle }}°</span>
+                                </div>
+                            </div>
+                            <div class="order-item-right" style="display: flex; gap: 20px; align-items: flex-start;">
+                                <form action="/update_material_thickness" method="POST" class="thickness-form" style="align-items: center;" onclick="event.stopPropagation()">
+                                    <input type="hidden" name="calculation_id" value="{{ $.order.ID }}">
+                                    <input type="hidden" name="material_id" value="{{ .ID }}">
+                                    <label for="thickness-{{ .ID }}" class="thickness-label">Толщина, мм</label>
+                                    <input 
+                                        type="text" 
+                                        id="thickness-{{ .ID }}" 
+                                        name="thickness" 
+                                        value="{{ if .Thickness }}{{ .Thickness }}{{ end }}" 
+                                        class="thickness-input"
+                                        placeholder="Не указана"
+                                    >
+                                    <button type="submit" class="thickness-submit">✓</button>
+                                </form>
+                                <div class="thickness-form" style="align-items: center;">
+                                    <label class="thickness-label">Оптимальный угол, °</label>
+                                    <input 
+                                        type="text" 
+                                        value="{{ if .OptimalTiltAngle }}{{ .OptimalTiltAngle }}{{ end }}" 
+                                        class="thickness-input"
+                                        readonly
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            <!-- Кнопка удаления заявки -->
+            <div style="margin-top: 40px; text-align: center;">
+                <form action="/delete_calculation" method="POST" style="display: inline;">
+                    <button type="submit" class="delete-button">Удалить заявку</button>
+                </form>
+            </div>
+            {{ else }}
+            <div class="empty-order">
+                <p>В заявке пока нет материалов</p>
+                <p style="margin-top: 20px;">
+                    <a href="/roofing_materials" class="search-button" style="display: inline-block; text-decoration: none;">
+                        Добавить материалы
+                    </a>
+                </p>
+            </div>
+            {{ end }}
+        </div>
+    </main>
+</body>
+</html>
+{{ end }}
+

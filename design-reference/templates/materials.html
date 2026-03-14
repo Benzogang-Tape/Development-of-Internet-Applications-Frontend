@@ -1,0 +1,67 @@
+{{ define "materials.html" }}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoofMaster - Каталог материалов</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+</head>
+<body>
+    {{ template "header" . }}
+
+    <main>
+        <div class="container">
+            <!-- Заголовок и описание -->
+            <h1 class="page-title">Расчет угла наклона кровли</h1>
+            <p class="page-subtitle">Выберите материал кровли для расчета оптимального угла наклона</p>
+
+            <!-- Поиск -->
+            <div class="search-container">
+                <form method="GET" action="/roofing_materials" style="display: flex; width: 100%; gap: 10px;">
+                    <input 
+                        type="text" 
+                        name="roofing_material" 
+                        class="search-input" 
+                        placeholder="Поиск материала..."
+                        value="{{ .query }}"
+                    >
+                    <button type="submit" class="search-button">Найти</button>
+                </form>
+            </div>
+
+            <!-- Сетка карточек материалов -->
+            {{ if .materials }}
+            <div class="materials-grid">
+                {{ range .materials }}
+                <div class="material-card">
+                    <div onclick="window.location.href='/roofing_materials/{{ .ID }}'" style="cursor: pointer;">
+                        <img src="{{ .ImageURL }}" alt="{{ .Name }}" class="material-image" onerror="this.src='https://via.placeholder.com/400x200?text={{ .Name }}'">
+                        <div class="material-content">
+                            <h3 class="material-name">{{ .Name }}</h3>
+                            <p class="material-angles">min ∠: {{ .MinAngle }}°</p>
+                            <p class="material-angles">max ∠: {{ .MaxAngle }}°</p>
+                        </div>
+                    </div>
+                    <form action="/add_to_calculation" method="POST" style="padding: 0 24px 24px 24px;">
+                        <input type="hidden" name="material_id" value="{{ .ID }}">
+                        <button type="submit" class="material-button" onclick="event.stopPropagation();">
+                            Добавить
+                        </button>
+                    </form>
+                </div>
+                {{ end }}
+            </div>
+            {{ else }}
+            <div class="empty-order">
+                <p>Материалы не найдены</p>
+            </div>
+            {{ end }}
+        </div>
+    </main>
+
+    {{ template "order_button" . }}
+</body>
+</html>
+{{ end }}
+
