@@ -1,0 +1,107 @@
+# Добавление адаптивности в React-приложение
+
+Приложение уже имеет частичную адаптивность (grid breakpoints для карточек и features), но навбар-бургер работает только с 430px, а ряд компонентов (модальное окно, страница деталей с sidebar) вообще не адаптированы. Нужно комплексно улучшить responsive design.
+
+## Текущее состояние
+
+| Компонент | Что уже есть | Что нужно сделать |
+|---|---|---|
+| [navbar.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/navbar.css) | Burger на 430px, простое скрытие ссылок | Увеличить breakpoint до 768px, добавить полноценный бургер с анимацией (три полоски → крестик), dropdown-меню |
+| [materials.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/materials.css) | Grid 3→2→1 на 1200px/768px | Адаптировать поиск и уменьшить шрифты заголовка |
+| [home.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/home.css) | Features 3→1 на 768px | Адаптировать hero (шрифты, отступы), about-блок |
+| [material_detail_modal.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/material_detail_modal.css) | Нет адаптивности | Адаптивность на мобильных (размеры, padding, шрифты) |
+| [material_detail_vertical.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/material_detail_vertical.css) | Sidebar фиксирован 250px | Скрыть sidebar на мобильных, убрать `margin-left` |
+| [sidebar_nav.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/sidebar_nav.css) | Нет адаптивности | Скрыть на мобильных |
+| [breadcrumbs.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/breadcrumbs.css) | Нет адаптивности | Изменить позицию на мобильных |
+| [order_button.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/order_button.css) | Фиксирован left:40px | Адаптировать позицию |
+| [global.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/global.css) | Container padding 40px 20px | Уменьшить padding на мобильных |
+
+## Proposed Changes
+
+### Navbar (burger-menu)
+
+#### [MODIFY] [navbar.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/navbar.css)
+
+Переделать media query с 430px на **768px**. Вместо простого `display: none / block` для toggle-кнопки — полноценный бургер с тремя полосками (используя `::before` / `::after` на `.navbar-toggler-icon`), который анимируется в крестик при `navbar_expanded`. Dropdown-меню для ссылок с абсолютным позиционированием.
+
+#### [MODIFY] [NavigationBar.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/components/NavigationBar.tsx)
+
+Убедиться что `onClick` на toggle корректно работает. Добавить `stopPropagation` на контейнер ссылок чтобы клик по ссылке не закрывал меню раньше навигации (меню само закроется через `useEffect` на `location`).
+
+---
+
+### Homepage
+
+#### [MODIFY] [home.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/home.css)
+
+Добавить media queries:
+- **768px**: уменьшить title до 32px, subtitle до 16px, hero margin
+- **480px**: уменьшить title до 26px, hero padding, about padding
+
+---
+
+### Materials page
+
+#### [MODIFY] [materials.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/materials.css)
+
+Добавить media queries:
+- **768px**: уменьшить title до 32px, поиск в колонку (flex-direction: column)
+- **480px**: title до 26px
+
+---
+
+### Modal
+
+#### [MODIFY] [material_detail_modal.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/material_detail_modal.css)
+
+Добавить media queries:
+- **768px**: уменьшить padding модала, высоту image до 250px, шрифт name до 24px, padding info
+- **480px**: padding 0.5rem, image 180px, name 20px, info padding 20px
+
+---
+
+### Material Detail Page (вертикальная)
+
+#### [MODIFY] [material_detail_vertical.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/pages/material_detail_vertical.css)
+
+Добавить media query **768px**:
+- Убрать `margin-left: 250px` у main
+- Карточка на всю ширину
+
+#### [MODIFY] [sidebar_nav.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/sidebar_nav.css)
+
+На **768px** скрыть sidebar (`display: none`).
+
+---
+
+### Utilities
+
+#### [MODIFY] [breadcrumbs.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/breadcrumbs.css)
+
+На **768px** уменьшить `left` до 1rem.
+
+#### [MODIFY] [order_button.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/components/order_button.css)
+
+На **480px** уменьшить `left` до 20px, `bottom` до 20px.
+
+#### [MODIFY] [global.css](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/styles/global.css)
+
+На **768px** уменьшить container padding до `20px 16px`.
+
+---
+
+## Verification Plan
+
+### Browser Visual Testing
+
+Запустить dev-сервер и проверить в браузере на разных размерах экрана:
+
+```bash
+cd "/Users/l.poljakov/Documents/BMSTU/Development of internet applications/Development-of-Internet-Applications-Frontend" && npm run dev
+```
+
+1. Открыть главную (`/`) — проверить hero, features 1-2-3, about-блок на 1200px, 768px, 480px, 320px
+2. Открыть `/materials` — проверить сетку карточек 3→2→1 колонка, поиск, заголовки
+3. Открыть `/materials/:id` — проверить что sidebar скрывается на 768px, карточка центрирована
+4. Проверить бургер-меню: на 768px и ниже бургер виден, по клику открывается меню со ссылками, анимация крестика
+5. Проверить модальное окно (клик по названию на странице деталей) — на мобильных должно корректно отображаться

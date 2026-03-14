@@ -1,0 +1,81 @@
+# Интеграция Redux Toolkit — сохранение состояния поиска
+
+## Цель
+
+Сейчас при уходе со страницы `/materials` компонент [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83) размонтируется, и все `useState` (searchQuery, materials, loading) сбрасываются. При возвращении — загрузка с нуля.
+
+**После интеграции Redux:** `searchQuery` и `materials` хранятся в глобальном store, и при навигации между страницами текст поиска и результаты сохраняются.
+
+## Proposed Changes
+
+### Redux Store
+
+#### [NEW] [store.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/store/store.ts)
+
+Создание глобального store через `configureStore` + `combineReducers`:
+
+```typescript
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import materialsReducer from "./materialsSlice";
+
+const store = configureStore({
+  reducer: combineReducers({
+    materials: materialsReducer,
+  }),
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export default store;
+```
+
+---
+
+#### [NEW] [materialsSlice.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/store/materialsSlice.ts)
+
+Слайс для состояния поиска/списка материалов:
+
+```typescript
+initialState: {
+  searchQuery: "",      // текст поиска — сохраняется между навигациями
+  materials: [],        // загруженные материалы
+  loading: false,       // статус загрузки
+}
+```
+
+Reducer'ы: `setSearchQuery`, `setMaterials`, `setLoading`.
+
+Селекторы: `useSearchQuery()`, `useMaterials()`, `useMaterialsLoading()`.
+
+---
+
+### Подключение к приложению
+
+#### [MODIFY] [main.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/main.tsx)
+
+Обернуть `<BrowserRouter>` в `<Provider store={store}>`.
+
+---
+
+#### [MODIFY] [MaterialsPage.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx)
+
+Заменить три локальных `useState` на Redux:
+- `searchQuery` → `useSearchQuery()` + `dispatch(setSearchQueryAction(...))`
+- `materials` → `useMaterials()` + `dispatch(setMaterialsAction(...))`
+- `loading` → `useMaterialsLoading()` + `dispatch(setLoadingAction(...))`
+
+`useEffect` загружает данные только если `materials.length === 0` (первый визит), иначе показывает кэшированные.
+
+---
+
+## Verification Plan
+
+### Automated
+```bash
+npx tsc --noEmit && npm run build
+```
+
+### Manual
+1. Открыть `/materials`, ввести "черепица", нажать «Найти»
+2. Перейти на `/` (Главная)
+3. Вернуться на `/materials` — текст "черепица" и отфильтрованные карточки должны сохраниться

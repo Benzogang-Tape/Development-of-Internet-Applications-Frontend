@@ -1,0 +1,177 @@
+# Жизненный цикл компонента [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83)
+
+## Классовый жизненный цикл → Хуки
+
+Исходная схема показывает методы **классового** компонента. В функциональных компонентах их заменяют **хуки**:
+
+| Фаза (класс) | Метод класса | Эквивалент в [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83) |
+|---|---|---|
+| Mounting: constructor | `this.state = {...}` | `useState<RoofingMaterial[]>([])` и др. |
+| Mounting: render | `render()` | Тело функции / JSX `return (...)` |
+| Mounting: componentDidMount | `componentDidMount()` | `useEffect(() => { loadMaterials() }, [])` |
+| Updating: setState | `this.setState(...)` | `setMaterials(data)`, `setLoading(true)`, `setSearchQuery(...)` |
+| Updating: render | `render()` | Повторный вызов тела функции |
+| Updating: componentDidUpdate | `componentDidUpdate()` | `useEffect` с зависимостями (не используется в данном компоненте) |
+| Unmounting | `componentWillUnmount()` | `useEffect(() => { return () => cleanup }, [])` (не используется) |
+
+---
+
+## Схема жизненного цикла [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83)
+
+```mermaid
+flowchart TD
+    subgraph mounting["⬇️ MOUNTING — первый рендер"]
+        direction TB
+        M1["🔵 useState × 3
+        materials = []
+        loading = true
+        searchQuery = ''"]
+        M2["🟢 render — первый вызов JSX
+        loading === true → Spinner"]
+        M3["🟡 useEffect([], mount)
+        → loadMaterials()"]
+        M4["⚡ fetch GET /api/roofing_materials
+        → setLoading(true)
+        → setMaterials(data)
+        → setLoading(false)"]
+
+        M1 --> M2
+        M2 --> M3
+        M3 --> M4
+    end
+
+    subgraph update1["🔄 UPDATING — после загрузки данных"]
+        direction TB
+        U1["setState вызовы:
+        setLoading(false)
+        setMaterials(data)"]
+        U2["🟢 re-render
+        loading === false
+        materials.length > 0
+        → MaterialCard × N"]
+
+        U1 --> U2
+    end
+
+    subgraph update2["🔄 UPDATING — пользователь ищет"]
+        direction TB
+        S1["Ввод в input
+        → setSearchQuery('черепица')"]
+        S2["🟢 re-render — изменился searchQuery
+        (input отображает новый текст)"]
+        S3["Нажатие 'Найти' / Enter
+        → handleSearchSubmit()
+        → e.preventDefault()
+        → loadMaterials()"]
+        S4["⚡ fetch GET /api/...?roofing_material=черепица
+        → setLoading(true) → re-render (Spinner)
+        → setMaterials(filtered) → setLoading(false)"]
+        S5["🟢 re-render
+        → отфильтрованные MaterialCard"]
+
+        S1 --> S2
+        S2 --> S3
+        S3 --> S4
+        S4 --> S5
+    end
+
+    subgraph unmount["❌ UNMOUNTING"]
+        direction TB
+        X1["Пользователь уходит на другую страницу
+        React удаляет компонент из DOM
+        (cleanup-функции useEffect нет —
+        нечего очищать)"]
+    end
+
+    mounting --> update1
+    update1 --> update2
+    update2 --> unmount
+
+    style M1 fill:#e3f2fd,stroke:#1976d2
+    style M2 fill:#e8f5e9,stroke:#388e3c
+    style M3 fill:#fff9c4,stroke:#f9a825
+    style M4 fill:#fff3e0,stroke:#ef6c00
+    style U1 fill:#e3f2fd,stroke:#1976d2
+    style U2 fill:#e8f5e9,stroke:#388e3c
+    style S1 fill:#e3f2fd,stroke:#1976d2
+    style S2 fill:#e8f5e9,stroke:#388e3c
+    style S3 fill:#fff9c4,stroke:#f9a825
+    style S4 fill:#fff3e0,stroke:#ef6c00
+    style S5 fill:#e8f5e9,stroke:#388e3c
+    style X1 fill:#ffebee,stroke:#c62828
+```
+
+---
+
+## Подробное описание каждой фазы
+
+### 1. Mounting — инициализация
+
+При первом рендере React вызывает функцию [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83). Выполняются хуки `useState`:
+
+```typescript
+const [materials, setMaterials] = useState<RoofingMaterial[]>([]);  // ← «constructor»
+const [loading, setLoading]     = useState<boolean>(true);
+const [searchQuery, setSearchQuery] = useState<string>("");
+```
+
+Это аналог `constructor()` + `this.state = { materials: [], loading: true, searchQuery: "" }` в классовом компоненте.
+
+Затем выполняется **return (JSX)** — аналог `render()`. Поскольку `loading === true`, отображается `<Spinner>`.
+
+### 2. Commit Phase → useEffect (аналог componentDidMount)
+
+После того как React обновил DOM (commit phase), срабатывает `useEffect`:
+
+```typescript
+useEffect(() => {
+  loadMaterials();  // ← аналог componentDidMount
+}, []);             // [] = только при монтировании
+```
+
+Пустой массив `[]` означает, что эффект запустится **один раз** — как `componentDidMount`.
+
+[loadMaterials()](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#18-29) вызывает `fetch`, получает данные, и делает `setState`:
+
+```typescript
+setLoading(true);                                        // → re-render: Spinner
+const data = await apiService.getMaterials(searchQuery);
+setMaterials(data);                                      // → re-render: карточки
+setLoading(false);                                       // → re-render: убрать Spinner
+```
+
+### 3. Updating — обновление по действию пользователя
+
+Каждый вызов `setState` запускает **повторный вызов** всей функции [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83) (аналог `render()` в классе). React сравнивает старое и новое дерево (reconciliation) и обновляет только изменившиеся узлы DOM.
+
+**Сценарий: пользователь вводит запрос и нажимает «Найти»:**
+
+```
+setSearchQuery("черепица")  →  re-render (input показывает "черепица")
+         ↓
+handleSearchSubmit()  →  loadMaterials()
+         ↓
+setLoading(true)  →  re-render (Spinner)
+         ↓
+fetch → данные получены
+         ↓
+setMaterials(filtered)  →  setLoading(false)  →  re-render (отфильтрованные карточки)
+```
+
+> [!IMPORTANT]
+> В классовом компоненте это был бы вызов `this.setState(...)` → `shouldComponentUpdate` → `render()` → `componentDidUpdate`. В функциональном компоненте весь цикл обновления скрыт за хуком `useState`: вызов `setMaterials()` автоматически ставит компонент в очередь на повторный рендер.
+
+### 4. Unmounting
+
+Когда пользователь переходит на другую страницу (например, `/materials/1`), React Router размонтирует [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83). Если бы в `useEffect` была return-функция (cleanup), она бы вызвалась на этом этапе — аналог `componentWillUnmount`. В [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83) cleanup не нужен: нет подписок, таймеров или WebSocket-соединений.
+
+---
+
+## Все хуки в [MaterialsPage](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/pages/MaterialsPage.tsx#9-83)
+
+| Хук | Вызов в коде | Аналог в классе | Назначение |
+|-----|-------------|-----------------|------------|
+| `useState` | `useState<RoofingMaterial[]>([])` | `this.state.materials` | Хранит массив загруженных материалов |
+| `useState` | `useState<boolean>(true)` | `this.state.loading` | Управляет показом спиннера |
+| `useState` | `useState<string>("")` | `this.state.searchQuery` | Хранит текст поискового запроса |
+| `useEffect` | `useEffect(() => { loadMaterials() }, [])` | `componentDidMount` | Загружает данные при монтировании |

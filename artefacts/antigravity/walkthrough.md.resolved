@@ -1,0 +1,40 @@
+# Walkthrough: Интеграция Tauri 2.0
+
+## Что сделано
+
+### Новые файлы
+- [target_config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/target_config.ts) — конфиг переключения режимов Tauri/Web
+- `src-tauri/` — каталог Tauri (создан через `npm run tauri init`)
+
+### Модифицированные файлы
+
+| Файл | Изменения |
+|------|-----------|
+| [package.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/package.json) | Добавлен script `"tauri"`, установлены `@tauri-apps/api` и `@tauri-apps/cli` |
+| [vite.config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/vite.config.ts) | `base` и proxy target берутся из [target_config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/target_config.ts) |
+| [main.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/main.tsx) | `basename` берётся из `dest_root` |
+| [api.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/services/api.ts) | `API_BASE_URL` берётся из `dest_api` |
+| [App.tsx](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src/App.tsx) | Добавлен `useEffect` с `invoke` для определения Tauri |
+
+### Конфигурация Tauri
+
+| Файл | Изменения |
+|------|-----------|
+| [tauri.conf.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/tauri.conf.json) | HTTP plugin, `withGlobalTauri`, CSP policy |
+| [Cargo.toml](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/Cargo.toml) | `tauri-plugin-http`, `tauri-plugin-cors-fetch` |
+| [default.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/capabilities/default.json) | HTTP/CORS permissions |
+| [lib.rs](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/src/lib.rs) | `.plugin(tauri_plugin_cors_fetch::init())` |
+
+## Что проверено
+- ✅ TypeScript компиляция проходит без ошибок (`npx tsc --noEmit`)
+- ✅ Tauri инициализация прошла успешно
+
+## Оставшиеся шаги (для пользователя)
+
+1. **Установить Rust**: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+2. **Заменить `YOUR_IP`** на реальный IP бэкенда в:
+   - [target_config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/target_config.ts) (строка 5)
+   - [src-tauri/tauri.conf.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/tauri.conf.json) (строка 31 — CSP)
+   - [src-tauri/capabilities/default.json](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/src-tauri/capabilities/default.json) (строка 12)
+3. **Dev режим**: `npm run tauri dev`
+4. **Build для демонстрации**: установить `target_tauri = true` в [target_config.ts](file:///Users/l.poljakov/Documents/BMSTU/Development%20of%20internet%20applications/Development-of-Internet-Applications-Frontend/target_config.ts), затем `npm run tauri build`

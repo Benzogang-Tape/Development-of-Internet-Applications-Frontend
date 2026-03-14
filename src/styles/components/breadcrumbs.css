@@ -1,0 +1,24 @@
+.breadcrumbs {
+  position: absolute;
+  top: calc(var(--navbar-height) + 1rem);
+  left: 3rem;
+}
+
+.breadcrumbs .breadcrumbs__item a {
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.breadcrumbs .breadcrumbs__item a:hover {
+  color: var(--text-primary);
+}
+
+.breadcrumbs .breadcrumbs__item.active {
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .breadcrumbs {
+    left: 1rem;
+  }
+}

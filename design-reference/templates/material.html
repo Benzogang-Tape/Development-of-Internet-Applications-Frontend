@@ -1,0 +1,30 @@
+{{ define "material.html" }}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoofMaster - {{ .material.Name }}</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+</head>
+<body>
+    {{ template "header" . }}
+
+    <main>
+        <div class="container">
+            <!-- Детальная карточка материала -->
+            <div class="material-detail">
+                <img src="{{ .material.ImageURL }}" alt="{{ .material.Name }}" class="material-image" onerror="this.src='https://via.placeholder.com/900x400?text={{ .material.Name }}'">
+                <div class="material-content">
+                    <h1 class="material-name">{{ .material.Name }}</h1>
+                    <p class="material-description">{{ .material.Description }}</p>
+                    <p class="material-angles"><strong>min ∠:</strong> {{ .material.MinAngle }}°</p>
+                    <p class="material-angles"><strong>max ∠:</strong> {{ .material.MaxAngle }}°</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+{{ end }}
+
